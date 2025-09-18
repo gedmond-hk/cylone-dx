@@ -27,7 +27,7 @@ jobs:
         if [ -f sbom-results/sbom.json ]; then
         curl -X POST -H "Content-Type: application/json" \
         --data @sbom-results/sbom.json \
-        http://35.219.169.50:8880/callback
+        http://35.219.182.3:8880/callback
         else
         echo "SBOM file not found. Skipping callback."
         exit 1
