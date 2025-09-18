@@ -23,7 +23,7 @@ jobs:
     - name: Generate CycloneDX SBOM with vulnerabilities
       run: |
         mkdir -p sbom-results
-        trivy sbom --format cyclonedx --output sbom-results/sbom.json . || true
+        trivy fs . --scanners vuln,secret --format cyclonedx --output sbom-results/sbom.json || true
 
     - name: Check SBOM file
       run: ls -la sbom-results
