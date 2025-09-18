@@ -17,6 +17,9 @@ jobs:
       run: |
         curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
+    - name: List files
+      run: ls -la
+
     - name: Generate CycloneDX SBOM with vulnerabilities
       run: |
         mkdir -p sbom-results
