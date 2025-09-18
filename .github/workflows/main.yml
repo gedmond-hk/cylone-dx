@@ -1,4 +1,4 @@
-name: CycloneDX SBOM with Trivy
+name: CycloneDX SBOM with cyclonedx-npm
 
 on:
   push:
@@ -13,23 +13,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install Trivy
-      run: |
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+    - name: Install CycloneDX NPM tool
+      run: npm install -g @cyclonedx/cyclonedx-npm
 
-    - name: List files
-      run: ls -la
-
-    - name: Generate CycloneDX SBOM with vulnerabilities
-      run: |
-        mkdir -p sbom-results
-        trivy fs . --scanners vuln,secret --format cyclonedx --output sbom-results/sbom.json || true
-
-    - name: Check SBOM file
-      run: ls -la sbom-results
-
-    - name: Copy SBOM to root for commit
-      run: cp sbom-results/sbom.json ./sbom.json
+    - name: Generate SBOM
+      run: cyclonedx-npm --output-file sbom.json --output-format json
 
 
     - name: Commit SBOM to repo
