@@ -22,8 +22,12 @@ jobs:
         mkdir -p sbom-results
         trivy sbom --format cyclonedx --output sbom-results/sbom.json . || true
 
+    - name: Check SBOM file
+      run: ls -la sbom-results
+
     - name: Copy SBOM to root for commit
       run: cp sbom-results/sbom.json ./sbom.json
+
 
     - name: Commit SBOM to repo
       run: |
