@@ -20,10 +20,10 @@ jobs:
     - name: Generate CycloneDX SBOM with vulnerabilities
       run: |
         mkdir -p sbom-results
-        trivy fs . --scanners vuln,secret --format cyclonedx --output sbom-results/sbom.json || true
+        trivy fs ./cyclonedx-sbom-cb --scanners vuln,secret --format cyclonedx --output sbom-results/sbom.json || true
 
     - name: Send SBOM to Challenge Listener
       run: |
-        curl -X POST -H "Content-Type: multipart/form-data" \
-        -F "file=@sbom-results/sbom.json" \
-        http://35.219.169.50:8880/callback
+        curl -X POST -H "Content-Type: application/json" \
+        --data @sbom-results/sbom.json \
+        http://35.219.182.3:8880/callback
