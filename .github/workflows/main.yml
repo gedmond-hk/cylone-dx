@@ -21,16 +21,11 @@ jobs:
 
 
     - name: Generate SBOM
-      run: cyclonedx-npm --output-file sbom.json --output-format json
+      run: npx @cyclonedx/cyclonedx-npm --output-file sbom.json --output-format json
 
+    - name: Show SBOM content
+      run: head -n 50 sbom.json
 
-    - name: Commit SBOM to repo
-      run: |
-        git config --global user.name "github-actions"
-        git config --global user.email "github-actions@github.com"
-        git add sbom.json
-        git commit -m "Add generated SBOM for review" || echo "No changes to commit"
-        git push
 
     - name: Send SBOM to Challenge Listener
       run: |
